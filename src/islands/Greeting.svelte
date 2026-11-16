@@ -67,7 +67,6 @@
   const current = $derived(other ?? first);
   let tick = $state(0);
   let queue: G[] = [];
-  let pausedUntil = 0;
   // Only voices stored on the device are used, so nothing is ever fetched from the internet to speak.
   let voices = $state.raw<SpeechSynthesisVoice[]>([]);
 
@@ -79,7 +78,8 @@
   }
   const voice = $derived(voiceFor(current.code));
 
-  // Every visit shuffles the list; it is used up before the same greeting can come round again.
+  // The greeting stays put until someone asks for another. Each ask takes the next from a shuffled list, which is used
+  // up completely before any greeting comes round again (and a new shuffle never starts with the one just shown).
   function another() {
     if (queue.length === 0) {
       queue = [...OTHERS];
@@ -87,10 +87,10 @@
         const j = Math.floor(Math.random() * (i + 1));
         [queue[i], queue[j]] = [queue[j]!, queue[i]!];
       }
+      if (queue.length > 1 && other && queue[queue.length - 1] === other) queue.unshift(queue.pop()!);
     }
     other = queue.pop()!;
     tick++;
-    pausedUntil = 0;
     window.speechSynthesis?.cancel();
   }
 
@@ -103,7 +103,6 @@
     u.lang = voice.lang;
     u.rate = 0.8;
     synth.speak(u);
-    pausedUntil = Date.now() + 12_000; // stay on this greeting while it is being listened to
   }
 
   function saveName(e: SubmitEvent) {
@@ -117,7 +116,6 @@
     other = null;
     tick++;
     asking = false;
-    pausedUntil = Date.now() + 6000; // let the new greeting be seen before the cycling starts again
     try { n === DEFAULT_NAME ? localStorage.removeItem(NAME_KEY) : localStorage.setItem(NAME_KEY, n); } catch { /* storage may be blocked */ }
   }
   function ask() {
@@ -133,11 +131,10 @@
       load();
       synth.addEventListener('voiceschanged', load);
     }
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Gentle auto-cycling, except for people who asked for less motion (they use the button instead).
-    const t = reduce ? 0 : window.setInterval(() => { if (!document.hidden && !asking && Date.now() >= pausedUntil) another(); }, 3200);
+    // Some phones fill in their list of voices a little late, so look again a few times.
+    const retries = synth ? [300, 1000, 2500].map((ms) => window.setTimeout(load, ms)) : [];
     return () => {
-      clearInterval(t);
+      retries.forEach(clearTimeout);
       synth?.removeEventListener('voiceschanged', load);
       synth?.cancel();
     };
@@ -152,6 +149,8 @@
   <div class="row buttons">
     {#if voice}
       <button class="btn blue small" type="button" onclick={hear} aria-label={`Hear ${current.hi} in ${current.lang}`}>🔊 Hear it</button>
+    {:else}
+      <span class="nosound">No sound for this one on this device</span>
     {/if}
     <button class="btn ghost small" type="button" onclick={another}>Say hi in another language</button>
   </div>
@@ -182,6 +181,7 @@
   .lang { margin: 0.1rem 0 0.7rem; min-height: 1.5rem; font-weight: 600; color: var(--muted); }
   .lang strong { color: var(--ink); }
   .buttons { justify-content: center; }
+  .nosound { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
   .word { max-width: 100%; overflow-wrap: anywhere; }
   .who { margin: 0.4rem 0 0; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
   .link { font: inherit; font-size: 0.9rem; font-weight: 700; color: var(--blue-dark); background: none; border: 0; text-decoration: underline; cursor: pointer; min-height: 44px; padding: 0 0.3rem; }

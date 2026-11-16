@@ -7,5 +7,17 @@
   { "src": "pictures/whale.svg", "alt": "A whale spouting water in the waves" },
   { "src": "pictures/moon.svg", "alt": "A full moon over mountains" },
   { "src": "pictures/tiger.svg", "alt": "A tiger's face" },
-  { "src": "pictures/pug.svg", "alt": "A pug's face with its tongue out" }
+  { "src": "pictures/pug.svg", "alt": "A pug's face with its tongue out" },
+  { "src": "pictures/owl.svg", "alt": "An owl on a branch in front of the moon" },
+  { "src": "pictures/butterfly.svg", "alt": "A big patterned butterfly" },
+  { "src": "pictures/castle.svg", "alt": "A castle with towers and flags on a hill" },
+  { "src": "pictures/balloons.svg", "alt": "Three hot air balloons floating over hills" },
+  { "src": "pictures/circus.svg", "alt": "A striped circus tent at night with spotlights" },
+  { "src": "pictures/reef.svg", "alt": "A coral reef with fish and bubbles" },
+  { "src": "pictures/city.svg", "alt": "A city skyline at night with lit windows" },
+  { "src": "pictures/astronaut.svg", "alt": "An astronaut floating beside a ringed planet" },
+  { "src": "pictures/lighthouse.svg", "alt": "A lighthouse on rocks with a beam of light" },
+  { "src": "pictures/jungle.svg", "alt": "A tiger peeking out from jungle leaves" },
+  { "src": "pictures/controller.svg", "alt": "A game controller with buttons" },
+  { "src": "pictures/pasta.svg", "alt": "A bowl of spaghetti with a fork" }
 ]

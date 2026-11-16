@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { dayOfYear } from '../lib/dates';
+  import { dayNumber } from '../lib/dates';
 
   type Fact = { text: string; topic: string };
   let { facts }: { facts: Fact[] } = $props();
@@ -10,8 +10,8 @@
   let base = $state(0);
 
   onMount(() => {
-    // Same fact all day for everyone: day of the year picks the position in the list.
-    base = dayOfYear(new Date()) - 1;
+    // Same fact all day for everyone: the day number picks the position, and the list carries on round without a jump at New Year.
+    base = dayNumber(new Date());
     ready = true;
   });
   const fact = $derived(facts[(base + offset) % facts.length]);

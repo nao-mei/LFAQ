@@ -46,16 +46,30 @@
     let finished = false;
     let idle = 0;
 
-    // A different picture each visit: never the one shown last time (if there is a choice).
-    let pic: Pic = pictures[0]!;
+    // Pictures come from a shuffled "deck" kept in this browser: every picture is shown once before any comes round
+    // again, and the first of a new shuffle is never the one just seen. Without storage it is a plain random pick.
+    const shuffle = <T,>(a: T[]): T[] => {
+      const b = [...a];
+      for (let i = b.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [b[i], b[j]] = [b[j]!, b[i]!];
+      }
+      return b;
+    };
+    const known = new Set(pictures.map((p) => p.src));
+    let pic: Pic = pictures[Math.floor(Math.random() * pictures.length)]!;
     try {
-      const prevSrc = localStorage.getItem('lfaq:lastPic');
-      const pool = pictures.length > 1 ? pictures.filter((p) => p.src !== prevSrc) : pictures;
-      pic = pool[Math.floor(Math.random() * pool.length)]!;
+      let deck: string[] = (JSON.parse(localStorage.getItem('lfaq:deck') ?? '[]') as string[]).filter((s) => known.has(s));
+      if (deck.length === 0) {
+        const prevSrc = localStorage.getItem('lfaq:lastPic');
+        deck = shuffle(pictures.map((p) => p.src));
+        if (deck.length > 1 && deck[0] === prevSrc) deck.push(deck.shift()!);
+      }
+      const next = deck.shift()!;
+      pic = pictures.find((p) => p.src === next) ?? pic;
+      localStorage.setItem('lfaq:deck', JSON.stringify(deck));
       localStorage.setItem('lfaq:lastPic', pic.src);
-    } catch {
-      pic = pictures[Math.floor(Math.random() * pictures.length)]!;
-    }
+    } catch { /* keep the random pick */ }
     alt = pic.alt;
 
     const mix = (k: number) => {

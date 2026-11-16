@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { landingRotation, pickIndex, segmentAt, segmentSizes } from './wheel';
-import { dayOfYear, daysTo, daysUntilChristmas, isoDate } from './dates';
+import { dayNumber, dayOfYear, daysTo, daysUntilChristmas, isoDate } from './dates';
 import { decodeShare, encodeShare, resolvePlan, upcoming, type Changes, type Week } from './plan';
 
 describe('wheel', () => {
@@ -37,6 +37,11 @@ describe('dates', () => {
   it('counts days to a date', () => {
     expect(daysTo(new Date(2026, 10, 16, 23), '2026-11-16')).toBe(0);
     expect(daysTo(new Date(2026, 10, 16), '2026-11-23')).toBe(7);
+  });
+  it('day number steps by one each day, even across clock changes and New Year', () => {
+    expect(dayNumber(new Date(2026, 0, 1)) - dayNumber(new Date(2025, 11, 31))).toBe(1);
+    expect(dayNumber(new Date(2026, 2, 29, 12)) - dayNumber(new Date(2026, 2, 28, 12))).toBe(1);
+    expect(dayNumber(new Date(2026, 9, 25, 23, 59)) - dayNumber(new Date(2026, 9, 24, 0, 1))).toBe(1);
   });
   it('local ISO date and day of year', () => {
     expect(isoDate(new Date(2026, 0, 5, 23, 59))).toBe('2026-01-05');

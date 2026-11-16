@@ -33,8 +33,8 @@ Almost everything that changes is plain JSON in `content/`. No code changes are 
 | `changes.json` | Dated holidays (`from`, `to`, `label`), one-off changes for a single date, and important dates |
 | `dinner.json` | The dinner wheel. A tree of choices with an optional `weight` (a bigger number gives a bigger slice) and follow-up choices under each |
 | `choose.json` | The starting choices on the "choose anything" wheel |
-| `facts.json` | The fun facts. One is shown per day, in order, by day of the year |
-| `pictures.json` | The pictures for the dot reveal. Files live in `public/pictures/` |
+| `facts.json` | The fun facts. One is shown per day, in file order, moving on by one each day and starting again at the top after the last. Keep neighbouring facts on different topics |
+| `pictures.json` | The pictures for the dot reveal. Files live in `public/pictures/`. Each browser shuffles them and shows every one before any repeats |
 
 Dates are written `YYYY-MM-DD`. Times are plain text, so write them however they should appear.
 

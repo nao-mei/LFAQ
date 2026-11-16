@@ -11,6 +11,9 @@ export const isoDate = (d: Date): string => `${d.getFullYear()}-${pad(d.getMonth
 
 export const dayKey = (d: Date): DayKey => DAY_KEYS[d.getDay()]!;
 
+/** Whole local calendar days since 1 Jan 1970. Steps by exactly one at the child's midnight, whatever the clocks do. */
+export const dayNumber = (d: Date): number => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 86_400_000);
+
 /** 1..366, local time. */
 export function dayOfYear(d: Date): number {
   const start = new Date(d.getFullYear(), 0, 0);
