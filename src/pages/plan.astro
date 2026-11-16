@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import PlanEditor from '../islands/PlanEditor.svelte';
+import week from '../../content/week.json';
+import changes from '../../content/changes.json';
+---
+<Base title="Grown-ups: change the plan" noindex>
+  <h1>Grown-ups: change the plan</h1>
+  <PlanEditor client:load week={week} changes={changes} />
+</Base>

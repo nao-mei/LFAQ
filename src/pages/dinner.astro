@@ -1,0 +1,10 @@
+---
+import Base from '../layouts/Base.astro';
+import DinnerFlow from '../islands/DinnerFlow.svelte';
+import dinner from '../../content/dinner.json';
+---
+<Base title="What's for dinner?" current="dinner">
+  <h1>What's for dinner?</h1>
+  <DinnerFlow client:load tree={dinner} />
+  <noscript><p>The dinner wheel needs JavaScript. The choices are: {dinner.children.map((c) => c.label).join(', ')}.</p></noscript>
+</Base>

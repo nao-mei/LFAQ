@@ -1,0 +1,11 @@
+[
+  { "src": "pictures/rocket.svg", "alt": "A rocket flying past a planet in space" },
+  { "src": "pictures/sun.svg", "alt": "A bright sun over rolling hills" },
+  { "src": "pictures/fish.svg", "alt": "A big friendly fish with bubbles" },
+  { "src": "pictures/cat.svg", "alt": "A cat's face" },
+  { "src": "pictures/flower.svg", "alt": "A big flower" },
+  { "src": "pictures/whale.svg", "alt": "A whale spouting water in the waves" },
+  { "src": "pictures/moon.svg", "alt": "A full moon over mountains" },
+  { "src": "pictures/tiger.svg", "alt": "A tiger's face" },
+  { "src": "pictures/pug.svg", "alt": "A pug's face with its tongue out" }
+]

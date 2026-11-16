@@ -1,0 +1,10 @@
+{
+  "holidays": [
+    { "from": "2026-12-18", "to": "2027-01-04", "label": "Christmas Holidays" },
+    { "from": "2027-02-15", "to": "2027-02-19", "label": "Spring Half Term" },
+    { "from": "2027-03-25", "to": "2027-04-12", "label": "Easter Holiday" },
+    { "from": "2027-05-31", "to": "2027-06-04", "label": "Summer Half Term" }
+  ],
+  "oneOffs": [],
+  "important": []
+}

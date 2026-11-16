@@ -1,0 +1,8 @@
+{
+  "label": "Dinner",
+  "children": [
+    { "label": "Pasta", "weight": 2, "children": [{ "label": "Mama Macaroni" }, { "label": "Tomato and cheese" }, { "label": "Pesto" }] },
+    { "label": "Jacket potato", "weight": 2, "children": [{ "label": "Beans and cheese" }] },
+    { "label": "Other", "weight": 1, "children": [{ "label": "Ramen" }, { "label": "Takeaway" }, { "label": "Veg spag bol" }, { "label": "Something else" }] }
+  ]
+}

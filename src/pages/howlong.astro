@@ -1,0 +1,9 @@
+---
+import Base from '../layouts/Base.astro';
+import HowLong from '../islands/HowLong.svelte';
+---
+<Base title="How long?" current="howlong">
+  <h1>How long?</h1>
+  <HowLong client:load />
+  <noscript><p>This page needs JavaScript to count the sleeps.</p></noscript>
+</Base>

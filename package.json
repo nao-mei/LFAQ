@@ -1,0 +1,23 @@
+{
+  "name": "lfaq",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@astrojs/check": "0.9.12",
+    "@astrojs/svelte": "9.1.0",
+    "astro": "7.4.1",
+    "svelte": "5.57.3",
+    "typescript": "6.0.3"
+  },
+  "devDependencies": {
+    "vitest": "5.1.0"
+  }
+}

@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import Greeting from '../islands/Greeting.svelte';
+import DotPicture from '../islands/DotPicture.svelte';
+import Fact from '../islands/Fact.svelte';
+import pics from '../../content/pictures.json';
+import facts from '../../content/facts.json';
+
+const base = import.meta.env.BASE_URL;
+const pictures = pics.map((p) => ({ ...p, src: `${base}${p.src}` }));
+const tiles = [
+  { href: 'today/', label: 'What are we doing today?', cls: 'red' },
+  { href: 'dinner/', label: "What's for dinner?", cls: 'blue' },
+  { href: 'choose/', label: "Can't decide?", cls: 'red' },
+  { href: 'howlong/', label: 'How long till…?', cls: 'blue' },
+];
+---
+<Base title="Hey Buddy!" current="home">
+  <Greeting client:load />
+  <DotPicture client:load pictures={pictures} />
+  <noscript><img src={pictures[0]?.src} alt={pictures[0]?.alt} width="400" height="300" style="max-width:100%;height:auto" /></noscript>
+
+  <nav class="tiles" aria-label="Things to do">
+    {tiles.map((t) => <a class={`tile ${t.cls}`} href={`${base}${t.href}`}>{t.label}</a>)}
+  </nav>
+
+  <h2>Fun fact of the day</h2>
+  <Fact client:load facts={facts} />
+</Base>
+
+<style>
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 0.8rem; margin: 1rem 0; }
+  .tile {
+    display: flex; align-items: center; justify-content: center; text-align: center; min-height: 84px; padding: 0.8rem 1rem;
+    border-radius: var(--radius); color: #fff; font-weight: 800; font-size: 1.25rem; text-decoration: none;
+  }
+  .tile.red { background: var(--red); box-shadow: 0 4px 0 var(--red-dark); }
+  .tile.blue { background: var(--blue); box-shadow: 0 4px 0 var(--blue-dark); }
+  .tile:hover { filter: brightness(1.1); }
+  .tile:active { transform: translateY(3px); box-shadow: none; }
+</style>

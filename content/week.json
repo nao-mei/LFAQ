@@ -1,0 +1,20 @@
+{
+  "school": {
+    "mon": { "headline": "School day", "pickup": "15:15", "activity": "Chillax" },
+    "tue": { "headline": "School day", "pickup": "15:15", "activity": "Circus 17:00" },
+    "wed": { "headline": "School day", "pickup": "17:15", "activity": "After School Club / MYT 17:30" },
+    "thu": { "headline": "School day", "pickup": "18:00", "activity": "After School Club" },
+    "fri": { "headline": "School day", "pickup": "15:15", "activity": "Swimming 19:00" },
+    "sat": { "headline": "Weekend" },
+    "sun": { "headline": "Weekend" }
+  },
+  "holiday": {
+    "mon": { "headline": "Holiday" },
+    "tue": { "headline": "Holiday" },
+    "wed": { "headline": "Holiday" },
+    "thu": { "headline": "Holiday" },
+    "fri": { "headline": "Holiday" },
+    "sat": { "headline": "Weekend" },
+    "sun": { "headline": "Weekend" }
+  }
+}

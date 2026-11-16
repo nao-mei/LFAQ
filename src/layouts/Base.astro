@@ -1,0 +1,35 @@
+---
+import '../styles/global.css';
+interface Props { title: string; description?: string; noindex?: boolean; current?: string }
+const { title, description = 'Frequently Asked Questions', noindex = false, current = '' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const links = [
+  { href: '', label: 'Home', id: 'home' },
+  { href: 'today/', label: 'Today', id: 'today' },
+  { href: 'dinner/', label: 'Dinner', id: 'dinner' },
+  { href: 'choose/', label: 'Choose', id: 'choose' },
+  { href: 'howlong/', label: 'How long?', id: 'howlong' },
+];
+---
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#15358f" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href={`${base}favicon.svg`} type="image/svg+xml" />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site">
+      <nav class="site" aria-label="Main">
+        {links.map((l) => <a href={`${base}${l.href}`} aria-current={current === l.id ? 'page' : undefined}>{l.label}</a>)}
+      </nav>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site"><a href={`${base}plan/`}>Grown-ups</a></footer>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import TodayPlanner from '../islands/TodayPlanner.svelte';
+import week from '../../content/week.json';
+import changes from '../../content/changes.json';
+---
+<Base title="What are we doing today?" current="today">
+  <h1>What are we doing today?</h1>
+  <TodayPlanner client:load week={week} changes={changes} />
+  <noscript><p>This page needs JavaScript to show today's plan.</p></noscript>
+</Base>

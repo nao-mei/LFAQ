@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import CustomWheel from '../islands/CustomWheel.svelte';
+import choose from '../../content/choose.json';
+---
+<Base title="Choose anything" current="choose">
+  <h1>Can't decide? Spin it!</h1>
+  <p>Type in your choices, then spin the wheel.</p>
+  <CustomWheel client:load defaults={choose.defaults} />
+  <noscript><p>This page needs JavaScript to run the wheel.</p></noscript>
+</Base>
