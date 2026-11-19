@@ -50,21 +50,21 @@
     if (!o.date || !Object.keys(c).length) { msg = 'Pick a date and fill in at least one thing.'; return; }
     oneOffs = [...oneOffs.filter((x) => x.date !== o.date), { date: o.date, ...c }].sort((a, b) => a.date.localeCompare(b.date));
     o = { date: '' };
-    msg = '';
+    msg = 'Added. Scroll down to "Your changes" to check it and copy the link.';
   }
   function addImportant(e: SubmitEvent) {
     e.preventDefault();
     if (!imp.date || !imp.label.trim()) { msg = 'Pick a date and say what it is.'; return; }
     important = [...important, { date: imp.date, label: imp.label.trim().slice(0, 40) }].sort((a, b) => a.date.localeCompare(b.date));
     imp = { date: '', label: '' };
-    msg = '';
+    msg = 'Added. Scroll down to "Your changes" to check it and copy the link.';
   }
   function addHol(e: SubmitEvent) {
     e.preventDefault();
     if (!h.from || !h.to || h.to < h.from) { msg = 'Pick a start and an end date (end on or after start).'; return; }
     holidays = [...holidays, { from: h.from, to: h.to, ...(h.label.trim() ? { label: h.label.trim().slice(0, 40) } : {}) }];
     h = { from: '', to: '', label: '' };
-    msg = '';
+    msg = 'Added. Scroll down to "Your changes" to check it and copy the link.';
   }
   function useWeek(e: SubmitEvent) {
     e.preventDefault();
@@ -83,7 +83,24 @@
   }
 </script>
 
-<p>Make a change, then send the link to the child's device. One-off changes and important dates disappear by themselves once the day has passed. Keep wording generic: the site is public.</p>
+<h2 class="first">How to change the plan</h2>
+<ol class="steps">
+  <li><strong>Add a change.</strong> Most of the time you only need <em>Change one day</em>, below. For example, the dentist on Thursday instead of the usual club. It only affects that one date and disappears by itself afterwards.</li>
+  <li><strong>Check it.</strong> Your changes appear in a list at the bottom of this page, showing what the Today page will say for that day.</li>
+  <li><strong>Send it to the child's device.</strong> Press <em>Copy link for the child's device</em> and send that link to the phone or tablet in a message. Open it once on that device, and the change is saved there.</li>
+</ol>
+
+<details class="card help">
+  <summary>Which box do I use? (with an example)</summary>
+  <ul>
+    <li><strong>Change one day</strong>: an appointment, a trip, or a different pickup time. Fill in only what is different. Anything you leave empty stays as usual.</li>
+    <li><strong>Important date</strong>: something to look forward to, like a party. It shows with a star in the week ahead and does not change pickup or after-school.</li>
+    <li><strong>Holiday dates</strong>: between these two dates, the Today page switches to the Holiday plan on its own. Add each school holiday once.</li>
+    <li><strong>Change the usual week</strong>: for a lasting change, like a new club on Tuesdays. It changes every week, not just one day.</li>
+  </ul>
+  <p><strong>Example.</strong> The dentist is on Thursday the 26th, after school. Pick that date in <em>Change one day</em>, type <em>Dentist</em> under After school, and type the new pickup time if it changes. Press <em>Add this change</em>, then scroll to the bottom and press <em>Copy link for the child's device</em>.</p>
+  <p><strong>To change it for everyone, for good</strong> (for example new school holiday dates): press <em>Copy text for changes.json</em>, open <a href="https://github.com/nao-mei/LFAQ/blob/main/content/changes.json">the changes file on GitHub</a>, click the pencil to edit, select everything, paste, and press <em>Commit changes</em>. The site updates within a couple of minutes. The site is public, so keep wording generic.</p>
+</details>
 
 <form class="card grid" onsubmit={addOne}>
   <h2>Change one day</h2>
@@ -148,10 +165,20 @@
     {#if newWeek}<button class="btn ghost small" type="button" onclick={() => copy(weekJson, 'Week text')}>Copy text for week.json</button>{/if}
     <button class="btn ghost small" type="button" onclick={() => { oneOffs = []; important = []; holidays = []; newWeek = undefined; }}>Clear</button>
   </div>
-  <p class="hint">The link adds these to whichever device opens it (the usual week stays until changed). The copied text is for the site's files, so everyone sees it.</p>
+  <ul class="explain">
+    <li><strong>Copy link for the child's device</strong>: send it to the phone or tablet and open it there once. These changes are then saved on that device only. One-off changes and important dates clear themselves after the day; a new usual week stays until it is changed again.</li>
+    <li><strong>Copy text for changes.json / week.json</strong>: for changes everyone should see on every device. Paste it into the file on GitHub (the steps are under "Which box do I use?" at the top).</li>
+    <li><strong>Clear</strong>: empties this list so you can start again. It does not undo anything already sent or saved.</li>
+  </ul>
 {/if}
 
 <style>
+  h2.first { margin-top: 0.4rem; }
+  .steps { padding-left: 1.3rem; display: grid; gap: 0.5rem; margin: 0.4rem 0 1rem; }
+  .help { margin: 1rem 0; }
+  .help summary { font-weight: 800; font-size: 1.1rem; cursor: pointer; min-height: 44px; display: flex; align-items: center; color: var(--blue-dark); }
+  .help ul, .explain { padding-left: 1.2rem; display: grid; gap: 0.5rem; }
+  .explain { color: var(--muted); font-size: 0.95rem; }
   .grid { display: grid; gap: 0.7rem; margin: 1rem 0; }
   .card.grid h2 { margin: 0; }
   .grid label { display: grid; gap: 0.25rem; }

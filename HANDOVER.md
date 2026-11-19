@@ -54,7 +54,7 @@ For the day being shown, in order of priority:
 2. A dated one-off change from `changes.json` or from a shared link.
 3. The usual week for the current mode (School or Holiday).
 
-Mode is Automatic by default: dates inside a holiday range switch it to Holiday, and anything else is School. A person can force School or Holiday on their own device. The "Coming up" list shows the next seven days using the same rules. The rules are in `src/lib/plan.ts` and covered by tests in `src/lib/lib.test.ts`.
+Mode is Automatic by default: dates inside a holiday range switch it to Holiday, and anything else is School. A person can force School or Holiday on their own device. The page shows Today and Tomorrow as two large cards, and the "Coming up" list shows the following six days, using the same rules. The rules are in `src/lib/plan.ts` and covered by tests in `src/lib/lib.test.ts`.
 
 ## Publishing
 

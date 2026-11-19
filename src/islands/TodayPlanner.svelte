@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { DAY_NAMES, dayKey, isoDate } from '../lib/dates';
-  import { decodeShare, resolvePlan, upcoming, type Changes, type Local, type Mode, type Slot, type Week } from '../lib/plan';
+  import { decodeShare, resolvePlan, upcoming, type Changes, type Local, type Mode, type Resolved, type Slot, type Week } from '../lib/plan';
 
   let { week, changes }: { week: Week; changes: Changes } = $props();
 
@@ -15,12 +15,12 @@
 
   const plan = $derived(resolvePlan(now, week, changes, local));
   const date = $derived(isoDate(now));
-  const heading = $derived(
-    `${DAY_NAMES[dayKey(now)]} ${now.getDate()} ${now.toLocaleDateString('en-GB', { month: 'long' })}`,
-  );
-  // The week ahead: tomorrow up to the same weekday next week.
+  // The week ahead, starting tomorrow. Tomorrow gets its own big card; the other six days sit in a list below.
   const ahead = $derived(upcoming(now, 7, week, changes, local));
-  const dayLabel = (d: Date, i: number) => (i === 0 ? 'Tomorrow' : `${DAY_NAMES[dayKey(d)]} ${d.getDate()}`);
+  const tomorrow = $derived(ahead[0]!);
+  const later = $derived(ahead.slice(1));
+  const longDate = (d: Date) => `${DAY_NAMES[dayKey(d)]} ${d.getDate()} ${d.toLocaleDateString('en-GB', { month: 'long' })}`;
+  const dayLabel = (d: Date) => `${DAY_NAMES[dayKey(d)]} ${d.getDate()}`;
   const modeChoice = $derived<'auto' | Mode>(local.mode ?? 'auto');
 
   onMount(() => {
@@ -84,15 +84,26 @@
     local = { ...local, overrides: o };
     editing = false;
   }
-  const cards = $derived(
-    [
-      plan.pickup ? { k: 'School pickup', v: plan.pickup } : null,
-      plan.activity ? { k: 'After school', v: plan.activity } : null,
-    ].filter((x): x is { k: string; v: string } => !!x),
-  );
 </script>
 
-<p class="date">{heading}</p>
+{#snippet dayCard(kind: 'today' | 'tomorrow', label: string, d: Date, p: Resolved)}
+  <section class={`day ${kind}`}>
+    <p class="pill">{label}</p>
+    <p class="when2">{longDate(d)}</p>
+    <h2>{p.headline ?? (p.mode === 'holiday' ? 'Holiday!' : label)}</h2>
+    {#if p.pickup || p.activity}
+      <dl>
+        {#if p.pickup}<div><dt>Pickup</dt><dd>{p.pickup}</dd></div>{/if}
+        {#if p.activity}<div><dt>After school</dt><dd>{p.activity}</dd></div>{/if}
+      </dl>
+    {:else if !p.headline}
+      <p>Nothing planned.</p>
+    {/if}
+    {#each p.notes as n}<p class="tag star">★ {n}</p>{/each}
+    {#if p.source !== 'default'}<p class="tag">Changed</p>{/if}
+  </section>
+{/snippet}
+
 <div class="seg" role="group" aria-label="Which kind of day">
   {#each [['auto', 'Automatic'], ['school', 'School'], ['holiday', 'Holiday']] as [v, l]}
     <button type="button" class:on={modeChoice === v} aria-pressed={modeChoice === v} onclick={() => setMode(v as 'auto' | Mode)}>{l}</button>
@@ -100,20 +111,10 @@
 </div>
 {#if plan.holidayLabel && plan.mode === 'holiday'}<p class="tag">{plan.holidayLabel}</p>{/if}
 
-<section class="today" aria-live="polite">
-  <h2>{plan.headline ?? (plan.mode === 'holiday' ? 'Holiday!' : 'Today')}</h2>
-  {#if cards.length}
-    <div class="cards">
-      {#each cards as c}
-        <div class="card"><span>{c.k}</span><strong>{c.v}</strong></div>
-      {/each}
-    </div>
-  {:else if !plan.headline}
-    <p>Nothing planned.</p>
-  {/if}
-  {#each plan.notes as n}<p class="tag star">★ {n}</p>{/each}
-  {#if plan.source !== 'default'}<p class="tag">Changed for today</p>{/if}
-</section>
+<div class="pair" aria-live="polite">
+  {@render dayCard('today', 'Today', now, plan)}
+  {@render dayCard('tomorrow', 'Tomorrow', tomorrow.d, tomorrow.plan)}
+</div>
 
 {#if editing}
   <form class="card edit" onsubmit={save}>
@@ -135,9 +136,9 @@
 
 <h2 class="ahead">Coming up</h2>
 <ul class="week">
-  {#each ahead as a, i}
+  {#each later as a}
     <li class:important={a.plan.notes.length > 0}>
-      <strong class="when">{dayLabel(a.d, i)}</strong>
+      <strong class="when">{dayLabel(a.d)}</strong>
       <span class="what">
         {#if a.plan.pickup}<span>Pickup {a.plan.pickup}</span>{/if}
         {#if a.plan.activity}<span>{a.plan.activity}</span>{/if}
@@ -149,6 +150,18 @@
 </ul>
 
 <style>
+  .pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1rem 0; }
+  .day { background: #fff; border: 4px solid var(--red); border-radius: var(--radius); padding: 0.9rem 1.1rem 1.1rem; }
+  .day.tomorrow { border-color: var(--blue); }
+  .pill { display: inline-block; margin: 0; padding: 0.1rem 0.9rem; border-radius: 999px; background: var(--red); color: #fff; font-weight: 900; font-size: 1.05rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tomorrow .pill { background: var(--blue); }
+  .when2 { margin: 0.4rem 0 0; font-weight: 700; color: var(--muted); }
+  .day h2 { font-size: clamp(1.5rem, 6vw, 2rem); margin: 0.1rem 0 0.6rem; color: var(--red-dark); }
+  .tomorrow h2 { color: var(--blue-dark); }
+  dl { margin: 0; display: grid; gap: 0.5rem; }
+  dl div { display: grid; gap: 0; }
+  dt { font-size: 0.8rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  dd { margin: 0; font-size: clamp(1.6rem, 7vw, 2.2rem); font-weight: 900; line-height: 1.1; color: var(--ink); }
   .ahead { margin-top: 2rem; }
   .week { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
   .week li { display: flex; gap: 0.9rem; align-items: baseline; background: #fff; border: 2px solid var(--line); border-radius: 14px; padding: 0.55rem 0.9rem; }
@@ -157,15 +170,10 @@
   .what { display: flex; flex-wrap: wrap; gap: 0.2rem 0.9rem; }
   .star { color: var(--red-dark); font-weight: 800; }
   .tag.star { color: #fff; }
-  .date { font-weight: 800; color: var(--muted); margin: 0 0 0.6rem; }
   .seg { display: inline-flex; border: 3px solid var(--blue); border-radius: 999px; overflow: hidden; }
   .seg button { font: inherit; font-weight: 800; border: 0; background: #fff; color: var(--blue-dark); padding: 0.55rem 1rem; min-height: 44px; cursor: pointer; }
   .seg button.on { background: var(--blue); color: #fff; }
   .tag { display: inline-block; margin: 0.6rem 0 0; padding: 0.15rem 0.7rem; border-radius: 999px; background: var(--red); color: #fff; font-weight: 700; font-size: 0.9rem; }
-  .today h2 { font-size: clamp(1.8rem, 7vw, 2.6rem); margin: 1rem 0 0.8rem; color: var(--red-dark); }
-  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.8rem; margin-bottom: 1rem; }
-  .card span { display: block; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-  .card strong { font-size: 1.8rem; color: var(--blue-dark); }
   .edit { display: grid; gap: 0.7rem; margin-top: 1rem; }
   .edit h2 { margin: 0; }
   .edit label { display: grid; gap: 0.25rem; }
